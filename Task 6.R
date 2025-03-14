@@ -1,10 +1,20 @@
 ### Task 6
 
 #1
-... 
+f_ratio <- function(x) { 
+  mean(x) / median(x)
+}
+  
+v <- c(1, 15, 26, 10, 68, 20, 56, 38, 73, 84, 510, 43, 23, 69, 19) # Example vector
+f_ratio(v) # Testing my function
 
 #2
-...
+f_outliermean <- function(x) {
+  tmp <- sort(x) 
+  mean(tmp[2:(length(tmp)-1)])
+}
+
+v_outliermean <- f_outliermean(v) # Testing my function with same example vector as above
 
 #3
 # https://r4ds.had.co.nz/pipes.html#pipes
