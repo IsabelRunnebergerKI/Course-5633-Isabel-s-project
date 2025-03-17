@@ -47,3 +47,34 @@ microarray_data <- read.delim("microarray_data.tab", header = TRUE, sep = "\t")
 #There's 553 rows, 1000 columns. 
 
 #2b
+microarray_data_NAs <- sapply(microarray_data, function(y) sum(is.na(y)))
+microarray_data_NAs <- as.data.table(microarray_data_NAs)
+View(microarray_data_NAs)
+
+ggplot(microarray_data_NAs, aes(x = microarray_data_NAs)) +
+  geom_histogram() +
+  ggtitle("Missing values") + 
+  theme_classic()
+
+#2c
+microarray_data_pcNAs <- as.data.table(microarray_data_NAs/nrow(microarray_data)) #Calculating % of missing values
+microarray_data_pcNAs[,"gene":= colnames(microarray_data)]
+microarray_data_NApc10 <- microarray_data_pcNAs[microarray_data_NAs>0.1,] #Checking for 10% (0.1)
+microarray_data_NApc20 <- microarray_data_pcNAs[microarray_data_NAs>0.2,]
+microarray_data_NApc30 <- microarray_data_pcNAs[microarray_data_NAs>0.3,]
+
+#2d
+microarray_data_colmeans <- colMeans(microarray_data, na.rm = TRUE) #Calculating mean value for each gene
+microarray_data2 <- microarray_data #Creating a copy of the data set to not overwrite
+for (col in 1:ncol(microarray_data2)) {
+  microarray_data2[is.na(microarray_data2[, col]), col] <- microarray_data_colmeans[col]
+}
+
+#3
+View(CO2_dt)
+ggplot(CO2_dt, aes(y=uptake, x=Treatment, fill=as.factor(conc)))+
+  geom_bar(stat = "summary", fun="mean", position = "dodge")+
+  facet_wrap(.~Type)+
+  labs(x="Treatment", y="Mean CO2 uptake", fill="Concentration")+
+  theme_light()
+# The uptake of CO2 is in general higher in Quebec than in Mississippi, but it's dependent on treatment of the plant (non-chilled takes up more) and concentration of CO2.
